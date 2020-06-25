@@ -1,16 +1,16 @@
 <template>
-  <ul v-if="posts && posts.length">
-    <li v-for="post of posts">
-      <p>
-        <strong>{{post.title}}</strong>
-      </p>
-      <p>{{post.visual_and_thumbnail_description}}</p>
-    </li>
+  <ul>
+    <p>
+      <strong>{{posts[0].title}}</strong>
+    </p>
+    <img :src="posts[0].hdurl" alt="APOD" />
+    <strong>{{posts[0].copyright}}</strong>
+    <!-- <p>{{post.visual_and_thumbnail_description}}</p> -->
   </ul>
 
   <!-- <ul v-if="errors && errors.length">
     <li v-for="error of errors">{{error.message}}</li>
-  </ul> -->
+  </ul>-->
 </template>
 
 <script>
@@ -27,10 +27,12 @@ export default {
   // Fetches posts when the component is created.
   created() {
     axios
-      .get(`https://actu.epfl.ch/api/jahia/channels/mediacom/news/fr/?format=json&limit=50`)
+      .get(
+        `https://api.nasa.gov/planetary/apod?api_key=kTbWTZatVtCUMYKm239ysrjh2WPtkBrycc6mackL`
+      )
       .then(response => {
         // JSON responses are automatically parsed.
-        this.posts = response.data;
+        this.posts[0] = response.data;
       })
       .catch(e => {
         this.errors.push(e);

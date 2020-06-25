@@ -1,6 +1,6 @@
 #FROM node:9.11.1-alpine
 FROM node:14.4.0-alpine
-
+RUN apk add python make g++
 RUN npm install -g http-server
 
 # make the 'app' folder the current working directory
