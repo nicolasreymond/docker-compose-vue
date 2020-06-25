@@ -1,5 +1,7 @@
 <template>
   <ul>
+    <input type="button" value="Prev" />
+    <input type="button" value="Next" />
     <p>
       <strong>{{posts[0].title}}</strong>
     </p>
@@ -26,10 +28,12 @@ export default {
 
   // Fetches posts when the component is created.
   created() {
+    var date = new Date();
+    date.setDate(date.getDate() + 1);
+    console.log();
+
     axios
-      .get(
-        `https://api.nasa.gov/planetary/apod?api_key=kTbWTZatVtCUMYKm239ysrjh2WPtkBrycc6mackL`
-      )
+      .get(`https://api.nasa.gov/planetary/apod?api_key=DEMO_KEY&date=` + date)
       .then(response => {
         // JSON responses are automatically parsed.
         this.posts[0] = response.data;
