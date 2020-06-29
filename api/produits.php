@@ -33,13 +33,12 @@
 	function AddProduct()
 	{
 
-		// On retourne l'id du record inséré
-		$sql = " INSERT INTO posts (commentaire, datePost, postType) VALUES (:c, :ts, :pt)";
+		$sql = " INSERT INTO posts (commentaire, datePost, postType) VALUES (:c, :dp, :pt)";
 		$sth = EDatabase::prepare($sql);
 		try {
 			$sth->execute(array(
 				':c' => $_POST["commentaire"],
-				':ts' => date("Y-m-d"),
+				':dp' => date("Y-m-d"),
 				':pt' => $_POST["postType"]
 			));
 		} catch (PDOException $e) {
@@ -56,7 +55,6 @@
 	{
 		$query = "DELETE FROM posts WHERE IDPosts=:id";
 		$sth = EDatabase::prepare($query);
-		var_dump($id);
 		try {
 			$sth->bindParam(':id', $id, PDO::PARAM_INT);   
 			$sth->execute();
@@ -70,6 +68,32 @@
 		echo json_encode($sth);
 	}
 	
+
+	function updateProduct($id)
+  	{
+		$_PUT = array(); //tableau qui va contenir les données reçues
+		parse_str(file_get_contents('php://input'), $_PUT);
+		// echo(file_get_contents('php://input'));
+		//construire la requête SQL
+		$sql="UPDATE posts SET commentaire=:c, datePost=:dp, postType=:pt WHERE IDPosts=:id";
+		
+		var_dump($_PUT["commentaire"]);
+		$sth = EDatabase::prepare($sql);
+		try {
+			$sth->bindParam(':c', $_PUT["commentaire"]);
+			$sth->bindParam(':dp', date("Y-m-d"));
+			$sth->bindParam(':pt', $_PUT["postType"], PDO::PARAM_STR);
+			$sth->bindParam(':id', $id, PDO::PARAM_INT);
+			$sth->execute();
+		} catch (PDOException $e) {
+			echo 'Problème de lecture de la base de données: ' . $e->getMessage();
+			EDatabase::rollBack();
+			return false;
+		}
+		
+		header('Content-Type: application/json');
+		echo json_encode($sth);
+	}
 
 	switch($request_method)
 	{
@@ -96,6 +120,12 @@
     		// Supprimer un produit
 			$id = intval($_GET["id"]);
 			deleteProduct($id);
+			break;
+
+		case 'PUT':
+			// Modifier un produit
+			$id = intval($_GET["id"]);
+			updateProduct($id);
 			break;
 
 		default:
